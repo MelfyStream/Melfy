@@ -13,28 +13,10 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package main
+package database
 
-import (
-	"github.com/MelfyStream/Melfy/database"
-	"github.com/joho/godotenv"
-	"log"
-	"os"
-)
-
-func init() {
-	log.SetPrefix("[Melfy] ")
-}
-
-func main() {
-	log.Println("[1/2] Loading env variables.")
-	if err := godotenv.Load(); err != nil {
-		panic(err)
-	}
-
-	log.Println("[2/2] Loading database...")
-	err := database.InitDatabase(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
-	if err != nil {
-		panic(err)
-	}
+type Anime struct {
+	Model
+	Path   string `gorm:"Type:varchar(64);Column:path;NOT NULL;primary_key;unique" json:"path"`
+	Source string `gorm:"Type:varchar(64);Column:source;NOT NULL;unique" json:"path"`
 }

@@ -13,28 +13,30 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package main
+package database
 
 import (
-	"github.com/MelfyStream/Melfy/database"
-	"github.com/joho/godotenv"
-	"log"
-	"os"
+	"github.com/jinzhu/gorm"
+	"time"
 )
 
-func init() {
-	log.SetPrefix("[Melfy] ")
+type Model struct {
+	ID        uint       `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `gorm:"Default:null" sql:"index" json:"deleted_at"`
 }
 
-func main() {
-	log.Println("[1/2] Loading env variables.")
-	if err := godotenv.Load(); err != nil {
-		panic(err)
+var Instance *gorm.DB
+
+func InitDatabase(username, password, name string) error {
+	db, err := gorm.Open("mysql",
+		username+":"+password+"@/"+name+"?charset=utf8&parseTime=True&loc=Local")
+	if err != nil {
+		return err
 	}
 
-	log.Println("[2/2] Loading database...")
-	err := database.InitDatabase(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
-	if err != nil {
-		panic(err)
-	}
+	Instance = db
+
+	return nil
 }
